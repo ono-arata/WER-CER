@@ -1,5 +1,6 @@
 from bert_score import score
 from rouge_score import rouge_scorer
+import nltk
 from nltk.translate.bleu_score import sentence_bleu
 from janome.tokenizer import Tokenizer
 
@@ -7,8 +8,8 @@ def calculate_bleu(hypothesis, reference):
     t = Tokenizer()
     hypothesis_tokens = [token.surface for token in t.tokenize(hypothesis)]
     reference_tokens = [[token.surface for token in t.tokenize(reference)]]
-    score = sentence_bleu(reference_tokens, hypothesis_tokens)
-    return score
+    bleu_score = sentence_bleu(reference_tokens, hypothesis_tokens)
+    return bleu_score
 
 def calculate_bertscore(hypothesis, reference):
     P, R, F1 = score([hypothesis], [reference], lang="ja")
@@ -25,8 +26,8 @@ with open("hypothesis.txt", 'r', encoding='utf-8') as file:
 with open("reference.txt", 'r', encoding='utf-8') as file:
     reference = file.read()
 bleu_score = calculate_bleu(hypothesis, reference)
-print(f"BLEU Score: {bleu_score}")
-rouge_scores = calculate_rouge(hypothesis, reference)
-print("ROUGE Scores:", rouge_scores)
 bert_scores = calculate_bertscore(hypothesis, reference)
+rouge_scores = calculate_rouge(hypothesis, reference)
+print(f"BLEU Score: {bleu_score}")
+print("ROUGE Scores:", rouge_scores)
 print("BERTScores:", bert_scores)
